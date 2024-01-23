@@ -1,0 +1,53 @@
+import 'package:flutter/material.dart';
+import 'package:steam_achievement_tracker/features/games/screens/game_details_screen.dart';
+import 'package:steam_achievement_tracker/services/models/games/game.dart';
+import 'package:steam_achievement_tracker/services/utils/colors.dart';
+
+class GameListTile extends StatelessWidget {
+  final Game game;
+  final String steamId;
+
+  const GameListTile({
+    Key? key,
+    required this.game,
+    required this.steamId,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return ListTile(
+      onTap: () {
+        Navigator.of(context).push(
+          MaterialPageRoute(
+            builder: (context) => GameDetailsScreen(
+              appId: game.appId,
+              steamID: steamId,
+              gameName: game.name,
+            ),
+          ),
+        );
+      },
+      tileColor: KColors.backgroundColor,
+      title: Text(
+        game.name,
+        style: const TextStyle(
+          color: KColors.activeTextColor,
+          fontWeight: FontWeight.w600,
+        ),
+      ),
+      leading: SizedBox(
+        width: 35,
+        height: 35,
+        child: Image.network(game.imgIconUrl!),
+      ),
+      subtitle: Text(
+        "Total Playtime: ${game.playtimeForever}",
+        style: const TextStyle(
+          color: KColors.inactiveTextColor,
+          fontWeight: FontWeight.w500,
+        ),
+      ),
+      dense: true,
+    );
+  }
+}
