@@ -34,47 +34,51 @@ class GameDetailsScreen extends StatelessWidget {
             onLoading: const Center(child: CircularProgressIndicator()),
             (state) => ListView(
               children: [
-                if (controller.gameDetails.value.achievements!.isNotEmpty)
+                if (controller
+                    .gameInfoAndAchievements.value.allAchievements!.isNotEmpty)
                   Column(
                     children: [
+                      // All Achievements
                       Obx(
                         () => Visibility(
-                          visible: controller
-                              .gameDetails.value.achievements!.isNotEmpty,
+                          visible: controller.gameInfoAndAchievements.value
+                              .allAchievements!.isNotEmpty,
                           child: Obx(
                             () => ExpandableGameTile(
                               isTotal: true,
                               gameName: gameName,
-                              achievements:
-                                  controller.gameDetails.value.achievements ??
-                                      [],
-                            ),
-                          ),
-                        ),
-                      ),
-                      Obx(
-                        () => Visibility(
-                          visible: controller.unlockedAchievements.value
-                              .achievements!.isNotEmpty,
-                          child: Obx(
-                            () => ExpandableGameTile(
-                              gameName: "Unlocked Achievements",
-                              achievements: controller.unlockedAchievements
-                                      .value.achievements ??
+                              achievements: controller.gameInfoAndAchievements
+                                      .value.allAchievements ??
                                   [],
                             ),
                           ),
                         ),
                       ),
+                      // Unlocked Achievements
                       Obx(
                         () => Visibility(
-                          visible: controller.lockedAchievements.value
-                              .achievements!.isNotEmpty,
+                          visible: controller.gameInfoAndAchievements.value
+                              .unlockedAchievements!.isNotEmpty,
+                          child: Obx(
+                            () => ExpandableGameTile(
+                              gameName: "Unlocked Achievements",
+                              achievements: controller.gameInfoAndAchievements
+                                      .value.unlockedAchievements ??
+                                  [],
+                            ),
+                          ),
+                        ),
+                      ),
+                      // Locked Achievements
+                      Obx(
+                        () => Visibility(
+                          visible: controller.gameInfoAndAchievements.value
+                              .lockedAchievements!.isNotEmpty,
                           child: Obx(
                             () => ExpandableGameTile(
                               gameName: "Locked Achievements",
-                              achievements: controller
-                                      .lockedAchievements.value.achievements ??
+                              achievements: controller.gameInfoAndAchievements
+                                      .value.lockedAchievements ??
                                   [],
                             ),
                           ),

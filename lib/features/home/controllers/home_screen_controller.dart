@@ -1,17 +1,13 @@
 // ignore_for_file: depend_on_referenced_packages
 
-import 'dart:convert';
-
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:http/http.dart' as http;
 import 'package:steam_achievement_tracker/features/games/screens/games_screen.dart';
 import 'package:steam_achievement_tracker/services/models/games/game.dart';
 import 'package:steam_achievement_tracker/services/models/user/user_steam_information.dart';
 import 'package:steam_achievement_tracker/services/utils/database.dart';
-import 'package:steam_achievement_tracker/services/utils/logger.dart';
 
-class HomeScreenController extends GetxController {
+class HomeScreenController extends GetxController with StateMixin<void> {
   final String steamID;
 
   final Rx<UserSteamInformation> playerSummary =
@@ -21,20 +17,22 @@ class HomeScreenController extends GetxController {
   final Database _database = Database.instance;
 
   HomeScreenController({required this.steamID}) {
-    getPlayerSummary();
+    init();
   }
 
-  /// Gets the user's basic Steam information from the Steam API.
-  void getPlayerSummary() async {
-    final response = await http.get(
-      Uri.parse(
-        'http://api.steampowered.com/ISteamUser/GetPlayerSummaries/v0002/?key=${_database.steamApiKey}&steamids=$steamID',
-      ),
-    );
-    playerSummary.value = UserSteamInformation.fromSteamAPI(
-      json.decode(response.body)['response']['players'][0],
-    );
-    logger.i(playerSummary);
+  init() async {
+    change(null, status: RxStatus.loading());
+    try {
+      playerSummary.value = await _database.getPlayerSummary(steamID) ??
+          UserSteamInformation.empty();
+      if (playerSummary.value == UserSteamInformation.empty()) {
+        change(null, status: RxStatus.empty());
+        return;
+      }
+    } catch (e) {
+      change(null, status: RxStatus.error(e.toString()));
+    }
+    change(null, status: RxStatus.success());
   }
 
   /// Navigate the user to the Games Screen.

@@ -7,22 +7,30 @@ import 'package:steam_achievement_tracker/services/models/games/achievement.dart
 class GameDetails extends Equatable {
   final String? gameName;
   final String? gameVersion;
-  final List<Achievement>? achievements;
+  final List<Achievement>? allAchievements;
+  final List<Achievement>? unlockedAchievements;
+  final List<Achievement>? lockedAchievements;
   const GameDetails({
     required this.gameName,
     required this.gameVersion,
-    this.achievements,
+    this.allAchievements,
+    this.unlockedAchievements,
+    this.lockedAchievements,
   });
 
   GameDetails copyWith({
     String? gameName,
     String? gameVersion,
-    List<Achievement>? achievements,
+    List<Achievement>? allAchievements,
+    List<Achievement>? unlockedAchievements,
+    List<Achievement>? lockedAchievements,
   }) {
     return GameDetails(
       gameName: gameName ?? this.gameName,
       gameVersion: gameVersion ?? this.gameVersion,
-      achievements: achievements ?? this.achievements,
+      allAchievements: allAchievements ?? this.allAchievements,
+      unlockedAchievements: unlockedAchievements ?? this.unlockedAchievements,
+      lockedAchievements: lockedAchievements ?? this.lockedAchievements,
     );
   }
 
@@ -30,9 +38,10 @@ class GameDetails extends Equatable {
     return <String, dynamic>{
       'gameName': gameName,
       'gameVersion': gameVersion,
-      'achievements': achievements != null
-          ? achievements!.map((x) => x.toMap()).toList()
-          : [],
+      'allAchievements': allAchievements!.map((x) => x.toMap()).toList(),
+      'unlockedAchievements':
+          unlockedAchievements!.map((x) => x.toMap()).toList(),
+      'lockedAchievements': lockedAchievements!.map((x) => x.toMap()).toList(),
     };
   }
 
@@ -40,7 +49,7 @@ class GameDetails extends Equatable {
     return const GameDetails(
       gameName: '',
       gameVersion: '',
-      achievements: [],
+      allAchievements: [],
     );
   }
 
@@ -51,7 +60,7 @@ class GameDetails extends Equatable {
       gameName: map['gameName'] != null ? map['gameName'] as String : 'N/A',
       gameVersion:
           map['gameVersion'] != null ? map['gameVersion'] as String : 'N/A',
-      achievements: map['availableGameStats']['achievements'] != null
+      allAchievements: map['availableGameStats']['achievements'] != null
           ? List<Achievement>.from(
               (map['availableGameStats']['achievements'] as List<dynamic>)
                   .map<Achievement?>(
@@ -59,6 +68,8 @@ class GameDetails extends Equatable {
               ),
             )
           : const [],
+      unlockedAchievements: const [],
+      lockedAchievements: const [],
     );
   }
 
@@ -71,6 +82,13 @@ class GameDetails extends Equatable {
   bool get stringify => true;
 
   @override
-  List<Object> get props =>
-      [gameName ?? "N/A", gameVersion ?? '', achievements ?? []];
+  List<Object> get props {
+    return [
+      gameName ?? 'N/A',
+      gameVersion ?? 'N/A',
+      allAchievements ?? const [],
+      unlockedAchievements ?? const [],
+      lockedAchievements ?? const [],
+    ];
+  }
 }

@@ -44,6 +44,16 @@ class HomeScreen extends StatelessWidget {
                           padding: const EdgeInsets.only(left: 100.0),
                           child: _Profile(),
                         ),
+                        const SizedBox(height: 10),
+                        const _StatsBody(),
+                        const Text(
+                          "Wallet Balance: ",
+                          style: TextStyle(
+                            color: KColors.activeTextColor,
+                            fontSize: 20,
+                            fontWeight: FontWeight.w400,
+                          ),
+                        ),
                       ],
                     ),
                   ),
@@ -64,36 +74,50 @@ class HomeScreen extends StatelessWidget {
   }
 }
 
+class _StatsBody extends GetView<HomeScreenController> {
+  const _StatsBody({Key? key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Container();
+  }
+}
+
 class DrawerTile extends StatelessWidget {
   final String text;
+  final Function()? onTap;
 
   const DrawerTile({
     super.key,
     required this.text,
+    this.onTap,
   });
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      margin: const EdgeInsets.symmetric(vertical: 5, horizontal: 10),
-      padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 20),
-      decoration: const BoxDecoration(
-        color: KColors.backgroundColor,
-      ),
-      child: Row(
-        children: [
-          Text(
-            text,
-            style: const TextStyle(
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        margin: const EdgeInsets.symmetric(vertical: 5, horizontal: 10),
+        padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 20),
+        decoration: const BoxDecoration(
+          color: KColors.backgroundColor,
+        ),
+        child: Row(
+          children: [
+            Text(
+              text,
+              style: const TextStyle(
+                color: KColors.activeTextColor,
+              ),
+            ),
+            const Spacer(),
+            const Icon(
+              Icons.arrow_forward_ios_sharp,
               color: KColors.activeTextColor,
             ),
-          ),
-          const Spacer(),
-          const Icon(
-            Icons.arrow_forward_ios_sharp,
-            color: KColors.activeTextColor,
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }

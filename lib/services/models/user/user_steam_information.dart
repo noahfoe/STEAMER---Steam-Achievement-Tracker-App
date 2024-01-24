@@ -60,7 +60,7 @@ class UserSteamInformation extends Equatable {
       steamID: map['steamid'] == null ? null : map['steamid'] as String,
       steamName:
           map['personaname'] == null ? null : map['personaname'] as String,
-      avatar: map['avatarfull'].toString(),
+      avatar: map['avatar'] == null ? null : map['avatar'] as String,
       realName: map['realname'] == null ? null : map['realname'] as String,
     );
   }
