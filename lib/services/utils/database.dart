@@ -37,7 +37,8 @@ class Database extends GetxController {
   }
 
   /// Gets the user's basic Steam information from the Steam API.
-  Future<UserSteamInformation> getPlayerSummary(steamID) async {
+  Future<UserSteamInformation> getPlayerSummary(
+      {required String steamID}) async {
     try {
       /// Get response from Steam API
       final response = await http.get(
@@ -60,7 +61,7 @@ class Database extends GetxController {
   }
 
   /// Gets the user's games list from the Steam API.
-  Future<Rx<List<Game>>> getPlayerGamesList(steamID) async {
+  Future<Rx<List<Game>>> getPlayerGamesList({required String steamID}) async {
     try {
       // Get response from Steam API
       final response = await http.get(
@@ -76,7 +77,8 @@ class Database extends GetxController {
       if (body == null || body.isEmpty) return RxList<Game>.empty().obs;
 
       // If there are no games, return an empty list
-      if (body['response']['games']) {
+      if (body['response']['games'] == null ||
+          body['response']['games'] == []) {
         return RxList<Game>.empty().obs;
       }
 

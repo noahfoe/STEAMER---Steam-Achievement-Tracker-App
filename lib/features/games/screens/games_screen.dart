@@ -17,36 +17,67 @@ class GamesScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: KColors.backgroundColor,
-      appBar: myAppBar(
-        title: 'Library',
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.search),
-            onPressed: () {},
+    return GetBuilder<GamesScreenController>(
+      init: GamesScreenController(steamID: steamID),
+      builder: (GamesScreenController controller) {
+        return Scaffold(
+          backgroundColor: KColors.backgroundColor,
+          appBar: myAppBar(
+            title: 'Library',
           ),
-        ],
-      ),
-      body: GetBuilder<GamesScreenController>(
-        init: GamesScreenController(steamID: steamID),
-        builder: (controller) {
-          return controller.obx(
+          body: controller.obx(
             onLoading: const Center(child: CircularProgressIndicator()),
             (state) => Obx(
               () => ListView.builder(
-                itemCount: controller.playerGamesList.value.length,
+                itemCount: controller.filteredGamesList.value.length,
                 itemBuilder: (context, index) {
+                  if (index == 0) {
+                    // Search Bar
+                    return Column(
+                      children: [
+                        const SizedBox(height: 10),
+                        Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 20.0),
+                          child: TextField(
+                            controller: controller.searchController,
+                            onChanged: controller.searchGamesList,
+                            style: const TextStyle(
+                              color: KColors.activeTextColor,
+                            ),
+                            decoration: const InputDecoration(
+                              hintText: 'Search',
+                              hintStyle: TextStyle(
+                                color: KColors.activeTextColor,
+                              ),
+                              prefixIcon: Icon(
+                                Icons.search,
+                                color: KColors.activeTextColor,
+                              ),
+                              filled: true,
+                              fillColor: KColors.backgroundColor,
+                              border: OutlineInputBorder(
+                                borderSide: BorderSide.none,
+                              ),
+                            ),
+                          ),
+                        ),
+                        GameListTile(
+                          game: controller.filteredGamesList.value[index],
+                          steamId: steamID,
+                        )
+                      ],
+                    );
+                  }
                   return GameListTile(
-                    game: controller.playerGamesList.value[index],
+                    game: controller.filteredGamesList.value[index],
                     steamId: steamID,
                   );
                 },
               ),
             ),
-          );
-        },
-      ),
+          ),
+        );
+      },
     );
   }
 }

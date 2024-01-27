@@ -1,5 +1,6 @@
 // ignore_for_file: depend_on_referenced_packages
 
+import 'package:flutter/widgets.dart';
 import 'package:get/get.dart';
 import 'package:steam_achievement_tracker/services/models/games/game_details.dart';
 import 'package:steam_achievement_tracker/services/utils/database.dart';
@@ -14,6 +15,7 @@ class GameDetailsScreenController extends GetxController with StateMixin<void> {
 
   final Database _database = Database.instance;
   final Rx<GameDetails> gameInfoAndAchievements = GameDetails.empty().obs;
+  final PageController pageController = PageController();
 
   init() async {
     change(null, status: RxStatus.loading());

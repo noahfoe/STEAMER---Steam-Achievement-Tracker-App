@@ -23,7 +23,7 @@ class HomeScreenController extends GetxController with StateMixin<void> {
   init() async {
     change(null, status: RxStatus.loading());
     try {
-      playerSummary.value = await _database.getPlayerSummary(steamID);
+      playerSummary.value = await _database.getPlayerSummary(steamID: steamID);
       if (playerSummary.value == UserSteamInformation.empty()) {
         change(null, status: RxStatus.empty());
         return;

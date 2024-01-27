@@ -62,7 +62,7 @@ class Game extends Equatable {
       playtime2Weeks: 0,
       imgIconUrl: '',
       imgLogoUrl: '',
-      hasCommunityVisibleStats: true,
+      hasCommunityVisibleStats: false,
     );
   }
 
@@ -78,9 +78,7 @@ class Game extends Equatable {
           'http://media.steampowered.com/steamcommunity/public/images/apps/${map['appid']}/${map['img_icon_url']}.jpg',
       imgLogoUrl:
           'http://media.steampowered.com/steamcommunity/public/images/apps/${map['appid']}/${map['img_logo_url']}.jpg',
-      hasCommunityVisibleStats: map['has_community_visible_stats'] != null
-          ? map['has_community_visible_stats'] as bool
-          : true,
+      hasCommunityVisibleStats: map['has_community_visible_stats'] ?? false,
     );
   }
 
@@ -101,7 +99,7 @@ class Game extends Equatable {
       playtime2Weeks ?? 0,
       imgIconUrl ?? '',
       imgLogoUrl ?? '',
-      hasCommunityVisibleStats ?? true,
+      hasCommunityVisibleStats ?? false,
     ];
   }
 }

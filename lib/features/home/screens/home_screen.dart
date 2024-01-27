@@ -46,14 +46,6 @@ class HomeScreen extends StatelessWidget {
                         ),
                         const SizedBox(height: 10),
                         const _StatsBody(),
-                        const Text(
-                          "Wallet Balance: ",
-                          style: TextStyle(
-                            color: KColors.activeTextColor,
-                            fontSize: 20,
-                            fontWeight: FontWeight.w400,
-                          ),
-                        ),
                       ],
                     ),
                   ),

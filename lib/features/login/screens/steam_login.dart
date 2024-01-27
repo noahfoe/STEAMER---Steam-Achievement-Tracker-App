@@ -22,7 +22,7 @@ class SteamLogin extends StatelessWidget {
       }
     });
 
-    var openId = OpenId.raw('https://myapp', 'https://myapp/', {});
+    var openId = OpenId.raw('https://steamer', 'https://steamer/', {});
     return WebviewScaffold(
       url: openId.authUrl().toString(),
       appBar: myAppBar(title: 'STEAMER'),

@@ -20,9 +20,8 @@ class GameListTile extends StatelessWidget {
         Navigator.of(context).push(
           MaterialPageRoute(
             builder: (context) => GameDetailsScreen(
-              appId: game.appId,
               steamID: steamId,
-              gameName: game.name,
+              game: game,
             ),
           ),
         );
