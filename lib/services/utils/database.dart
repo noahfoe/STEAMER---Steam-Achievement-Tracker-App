@@ -6,6 +6,7 @@ import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
 import 'package:steam_achievement_tracker/services/models/games/game.dart';
 import 'package:steam_achievement_tracker/services/models/games/game_details.dart';
+import 'package:steam_achievement_tracker/services/models/games/global_achievement_percentages.dart';
 import 'package:steam_achievement_tracker/services/models/user/user_steam_information.dart';
 import 'package:steam_achievement_tracker/services/utils/logger.dart';
 
@@ -54,6 +55,27 @@ class Database extends GetxController {
 
       /// Return the data object
       return temp;
+    } catch (e) {
+      logger.e(e);
+      throw Exception(e);
+    }
+  }
+
+  Future<RxList<GlobalAchievementPercentages>>
+      getGlobalAchievementPercentagesForApp({required int appID}) async {
+    try {
+      final response = await http.get(
+        Uri.parse(
+          'http://api.steampowered.com/ISteamUserStats/GetGlobalAchievementPercentagesForApp/v0002/?gameid=$appID',
+        ),
+      );
+      List<GlobalAchievementPercentages> temp = [];
+      Map<String, dynamic> body = json.decode(response.body);
+      List achievements = body['achievementpercentages']['achievements'];
+      for (var element in achievements) {
+        temp.add(GlobalAchievementPercentages.fromMap(element));
+      }
+      return temp.obs;
     } catch (e) {
       logger.e(e);
       throw Exception(e);

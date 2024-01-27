@@ -76,6 +76,8 @@ class _AchievementDropdowns extends GetView<GameDetailsScreenController> {
                         achievements: controller.gameInfoAndAchievements.value
                                 .allAchievements ??
                             [],
+                        globalAchievementPercentages:
+                            controller.achievementsAndGlobalPercentages.value,
                       ),
                     ),
                   ),
@@ -91,6 +93,8 @@ class _AchievementDropdowns extends GetView<GameDetailsScreenController> {
                         achievements: controller.gameInfoAndAchievements.value
                                 .unlockedAchievements ??
                             [],
+                        globalAchievementPercentages:
+                            controller.achievementsAndGlobalPercentages.value,
                       ),
                     ),
                   ),
@@ -106,6 +110,8 @@ class _AchievementDropdowns extends GetView<GameDetailsScreenController> {
                         achievements: controller.gameInfoAndAchievements.value
                                 .lockedAchievements ??
                             [],
+                        globalAchievementPercentages:
+                            controller.achievementsAndGlobalPercentages.value,
                       ),
                     ),
                   ),

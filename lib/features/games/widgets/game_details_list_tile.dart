@@ -1,13 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:steam_achievement_tracker/services/models/games/achievement.dart';
+import 'package:steam_achievement_tracker/services/models/games/global_achievement_percentages.dart';
 import 'package:steam_achievement_tracker/services/utils/colors.dart';
+import 'package:steam_achievement_tracker/services/utils/logger.dart';
 
 class GameDetailsListTile extends StatelessWidget {
   final Achievement achievement;
+  final List<GlobalAchievementPercentages> globalAchievementPercentages;
 
   const GameDetailsListTile({
     Key? key,
     required this.achievement,
+    required this.globalAchievementPercentages,
   }) : super(key: key);
 
   @override
@@ -24,14 +28,41 @@ class GameDetailsListTile extends StatelessWidget {
           fontWeight: FontWeight.w500,
         ),
       ),
-      subtitle: Text(
-        achievement.description ?? "No Description",
-        style: const TextStyle(
-          color: KColors.inactiveTextColor,
-          fontWeight: FontWeight.w400,
-        ),
+      subtitle: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            achievement.description ?? "No Description",
+            style: const TextStyle(
+              color: KColors.inactiveTextColor,
+              fontWeight: FontWeight.w400,
+            ),
+          ),
+          const SizedBox(height: 5),
+          Text(
+            "$_getGlobalPercentageForThisAchievement% of all players",
+            style: const TextStyle(
+              color: KColors.inactiveTextColor,
+              fontWeight: FontWeight.w400,
+            ),
+          )
+        ],
       ),
       dense: true,
     );
+  }
+
+  String get _getGlobalPercentageForThisAchievement {
+    if (globalAchievementPercentages.isEmpty) {
+      logger.e("Global Achievement Percentages is empty");
+      return "0";
+    }
+
+    // Find the global percentage for this achievement without using .firstWhere
+    final percentage = globalAchievementPercentages
+        .where((element) => element.name == achievement.name)
+        .first;
+
+    return percentage.percent.toStringAsFixed(2);
   }
 }

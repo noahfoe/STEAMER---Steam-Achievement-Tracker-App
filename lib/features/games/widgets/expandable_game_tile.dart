@@ -1,18 +1,21 @@
 import 'package:flutter/material.dart';
 import 'package:steam_achievement_tracker/features/games/widgets/game_details_list_tile.dart';
 import 'package:steam_achievement_tracker/services/models/games/achievement.dart';
+import 'package:steam_achievement_tracker/services/models/games/global_achievement_percentages.dart';
 import 'package:steam_achievement_tracker/services/utils/colors.dart';
 
 class ExpandableGameTile extends StatelessWidget {
   final String gameName;
   final bool isTotal;
   final List<Achievement> achievements;
+  final List<GlobalAchievementPercentages> globalAchievementPercentages;
 
   const ExpandableGameTile({
     Key? key,
     this.isTotal = false,
     required this.gameName,
     required this.achievements,
+    required this.globalAchievementPercentages,
   }) : super(key: key);
 
   @override
@@ -58,6 +61,7 @@ class ExpandableGameTile extends StatelessWidget {
           itemCount: achievements.length,
           itemBuilder: (context, index) => GameDetailsListTile(
             achievement: achievements[index],
+            globalAchievementPercentages: globalAchievementPercentages,
           ),
         ),
       ],

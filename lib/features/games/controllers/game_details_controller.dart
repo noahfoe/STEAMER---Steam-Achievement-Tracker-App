@@ -3,6 +3,7 @@
 import 'package:flutter/widgets.dart';
 import 'package:get/get.dart';
 import 'package:steam_achievement_tracker/services/models/games/game_details.dart';
+import 'package:steam_achievement_tracker/services/models/games/global_achievement_percentages.dart';
 import 'package:steam_achievement_tracker/services/utils/database.dart';
 
 class GameDetailsScreenController extends GetxController with StateMixin<void> {
@@ -15,6 +16,9 @@ class GameDetailsScreenController extends GetxController with StateMixin<void> {
 
   final Database _database = Database.instance;
   final Rx<GameDetails> gameInfoAndAchievements = GameDetails.empty().obs;
+  final Rx<List<GlobalAchievementPercentages>>
+      achievementsAndGlobalPercentages =
+      RxList<GlobalAchievementPercentages>.empty().obs;
   final PageController pageController = PageController();
 
   init() async {
@@ -24,6 +28,7 @@ class GameDetailsScreenController extends GetxController with StateMixin<void> {
         steamID: steamID,
         appID: appID,
       );
+
       if (gameInfoAndAchievements.value == GameDetails.empty()) {
         change(null, status: RxStatus.empty());
         return;
@@ -33,6 +38,8 @@ class GameDetailsScreenController extends GetxController with StateMixin<void> {
         steamID: steamID,
         appID: appID,
       );
+      achievementsAndGlobalPercentages.value =
+          await _database.getGlobalAchievementPercentagesForApp(appID: appID);
     } catch (e) {
       change(null, status: RxStatus.error(e.toString()));
     }
