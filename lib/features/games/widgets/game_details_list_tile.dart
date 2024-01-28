@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:steam_achievement_tracker/services/models/games/achievement.dart';
 import 'package:steam_achievement_tracker/services/models/games/global_achievement_percentages.dart';
 import 'package:steam_achievement_tracker/services/utils/colors.dart';
-import 'package:steam_achievement_tracker/services/utils/logger.dart';
 
 class GameDetailsListTile extends StatelessWidget {
   final Achievement achievement;
@@ -54,7 +53,6 @@ class GameDetailsListTile extends StatelessWidget {
 
   String get _getGlobalPercentageForThisAchievement {
     if (globalAchievementPercentages.isEmpty) {
-      logger.e("Global Achievement Percentages is empty");
       return "0";
     }
 

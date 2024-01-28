@@ -8,7 +8,6 @@ import 'package:steam_achievement_tracker/services/models/games/game.dart';
 import 'package:steam_achievement_tracker/services/models/games/game_details.dart';
 import 'package:steam_achievement_tracker/services/models/games/global_achievement_percentages.dart';
 import 'package:steam_achievement_tracker/services/models/user/user_steam_information.dart';
-import 'package:steam_achievement_tracker/services/utils/logger.dart';
 
 class Database extends GetxController {
   static Database instance = Get.put(_instance);
@@ -127,11 +126,9 @@ class Database extends GetxController {
     // Create a temporary list to store the data
     RxList<GameDetails> temp = RxList<GameDetails>.empty();
 
-    logger.i("Starting loop");
     // Loop through the games, getting their details
     int i = 0;
     for (var game in games) {
-      logger.i(i);
       temp.add(await getGameDetails(steamID: steamID, appID: game.appId));
       temp.value[i] = temp.value[i].copyWith(
         gameName: games.value[i].name,
@@ -140,8 +137,6 @@ class Database extends GetxController {
       i++;
     }
 
-    logger.i("End of loop");
-    logger.i(temp);
     // Return the data object
     return temp;
   }
@@ -238,7 +233,6 @@ class Database extends GetxController {
       );
       return gameDetails;
     } catch (e) {
-      logger.e(e);
       rethrow;
     }
   }
@@ -253,7 +247,6 @@ class Database extends GetxController {
           )
           .then((value) => json.decode(value.body)['response']['player_level']);
     } catch (e) {
-      logger.e("Error getting steam level");
       rethrow;
     }
   }

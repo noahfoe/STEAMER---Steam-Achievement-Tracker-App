@@ -4,7 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:steam_achievement_tracker/features/home/screens/home_screen.dart';
 import 'package:steam_achievement_tracker/features/login/screens/steam_login.dart';
-import 'package:steam_achievement_tracker/services/utils/logger.dart';
 
 class LoginController extends GetxController {
   final Rx<String> steamID = ''.obs;
@@ -32,8 +31,7 @@ class LoginController extends GetxController {
         ),
       );
     } catch (e) {
-      // Catch any errors and log them
-      logger.e(e);
+      rethrow;
     }
   }
 }

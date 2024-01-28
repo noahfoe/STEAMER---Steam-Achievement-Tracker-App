@@ -7,7 +7,6 @@ import 'package:steam_achievement_tracker/services/models/games/game.dart';
 import 'package:steam_achievement_tracker/services/models/games/game_details.dart';
 import 'package:steam_achievement_tracker/services/models/user/user_steam_information.dart';
 import 'package:steam_achievement_tracker/services/utils/database.dart';
-import 'package:steam_achievement_tracker/services/utils/logger.dart';
 import 'package:steam_achievement_tracker/services/utils/preference_utils.dart';
 
 class HomeScreenController extends GetxController with StateMixin<void> {
@@ -46,13 +45,11 @@ class HomeScreenController extends GetxController with StateMixin<void> {
       if (gameDetails.value.isEmpty) {
         gameDetails.value =
             await _database.getEveryOwnedGamesGameDetails(steamID: steamID);
-        logger.i("outside function");
-        logger.i(gameDetails.value);
+
         PreferenceUtils.setGameDetails(gameDetails.value);
       }
       update();
     } catch (e) {
-      //logger.e(e);
       change(null, status: RxStatus.error(e.toString()));
     }
     change(null, status: RxStatus.success());
@@ -67,11 +64,6 @@ class HomeScreenController extends GetxController with StateMixin<void> {
     playerSummary.refresh();
     playerGamesList.refresh();
     gameDetails.refresh();
-    logger.i("refreshed");
-    logger.i("steamLevel: ${steamLevel.value}");
-    logger.i("playerSummary: ${playerSummary.value}");
-    logger.i("playerGamesList: ${playerGamesList.value}");
-    logger.i("gameDetails: ${gameDetails.value}");
   }
 
   /// Navigate the user to the Games Screen.

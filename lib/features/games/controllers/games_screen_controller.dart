@@ -4,7 +4,6 @@ import 'package:flutter/widgets.dart';
 import 'package:get/get.dart';
 import 'package:steam_achievement_tracker/services/models/games/game.dart';
 import 'package:steam_achievement_tracker/services/utils/database.dart';
-import 'package:steam_achievement_tracker/services/utils/logger.dart';
 
 class GamesScreenController extends GetxController with StateMixin<void> {
   final String steamID;
@@ -41,9 +40,9 @@ class GamesScreenController extends GetxController with StateMixin<void> {
         change(null, status: RxStatus.empty());
         return;
       }
-    } catch (e, s) {
-      logger.e(e, stackTrace: s);
+    } catch (e) {
       change(null, status: RxStatus.error(e.toString()));
+      rethrow;
     }
     change(null, status: RxStatus.success());
   }
