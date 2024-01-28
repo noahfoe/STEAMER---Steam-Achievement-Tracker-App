@@ -36,12 +36,13 @@ class GameDetails extends Equatable {
 
   Map<String, dynamic> toMap() {
     return <String, dynamic>{
-      'gameName': gameName,
-      'gameVersion': gameVersion,
-      'allAchievements': allAchievements!.map((x) => x.toMap()).toList(),
+      'gameName': gameName ?? '',
+      'gameVersion': gameVersion ?? '',
+      'allAchievements': allAchievements?.map((x) => x.toMap()).toList() ?? [],
       'unlockedAchievements':
-          unlockedAchievements!.map((x) => x.toMap()).toList(),
-      'lockedAchievements': lockedAchievements!.map((x) => x.toMap()).toList(),
+          unlockedAchievements?.map((x) => x.toMap()).toList() ?? [],
+      'lockedAchievements':
+          lockedAchievements?.map((x) => x.toMap()).toList() ?? [],
     };
   }
 
@@ -60,18 +61,54 @@ class GameDetails extends Equatable {
       gameName: map['gameName'] != null ? map['gameName'] as String : 'N/A',
       gameVersion:
           map['gameVersion'] != null ? map['gameVersion'] as String : 'N/A',
-      allAchievements: map['availableGameStats']['achievements'] != null
-          ? List<Achievement>.from(
-              (map['availableGameStats']['achievements'] as List<dynamic>)
-                  .map<Achievement?>(
-                (x) => Achievement.fromMap(x as Map<String, dynamic>),
-              ),
-            )
+      allAchievements: map['availableGameStats'] != null
+          ? map['availableGameStats']['achievements'] != null
+              ? List<Achievement>.from(
+                  (map['availableGameStats']['achievements'] as List<dynamic>)
+                      .map<Achievement?>(
+                    (x) => Achievement.fromMap(x as Map<String, dynamic>),
+                  ),
+                )
+              : const []
           : const [],
       unlockedAchievements: const [],
       lockedAchievements: const [],
     );
   }
+
+  factory GameDetails.fromSharedPrefs(Map<String, dynamic> map) {
+    return GameDetails(
+      gameName: map['gameName'] as String,
+      gameVersion: map['gameVersion'] as String,
+      allAchievements: map['allAchievements'] != []
+          ? (map['allAchievements'] as List<dynamic>)
+              .map((item) => Achievement.fromSharedPrefs(item))
+              .toList()
+          : [],
+      unlockedAchievements: map['unlockedAchievements'] != []
+          ? (map['unlockedAchievements'] as List<dynamic>)
+              .map((item) => Achievement.fromSharedPrefs(item))
+              .toList()
+          : [],
+      lockedAchievements: map['lockedAchievements'] != []
+          ? (map['lockedAchievements'] as List<dynamic>)
+              .map((item) => Achievement.fromSharedPrefs(item))
+              .toList()
+          : [],
+    );
+  }
+
+  /* 
+  
+  'gameName': gameName ?? '',
+      'gameVersion': gameVersion ?? '',
+      'allAchievements': allAchievements?.map((x) => x.toMap()).toList() ?? [],
+      'unlockedAchievements':
+          unlockedAchievements?.map((x) => x.toMap()).toList() ?? [],
+      'lockedAchievements':
+          lockedAchievements?.map((x) => x.toMap()).toList() ?? [],
+          
+   */
 
   String toJson() => json.encode(toMap());
 

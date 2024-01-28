@@ -1,4 +1,4 @@
-// ignore_for_file: depend_on_referenced_packages
+// ignore_for_file: depend_on_referenced_packages, invalid_use_of_protected_member
 
 import 'dart:convert';
 
@@ -32,8 +32,7 @@ class Database extends GetxController {
       // Parse the response and set the api key
       steamApiKey = json.decode(response.body)['steamApiKey'];
     } catch (e) {
-      logger.e(e);
-      throw Exception(e);
+      rethrow;
     }
   }
 
@@ -56,8 +55,7 @@ class Database extends GetxController {
       /// Return the data object
       return temp;
     } catch (e) {
-      logger.e(e);
-      throw Exception(e);
+      rethrow;
     }
   }
 
@@ -77,13 +75,12 @@ class Database extends GetxController {
       }
       return temp.obs;
     } catch (e) {
-      logger.e(e);
-      throw Exception(e);
+      rethrow;
     }
   }
 
   /// Gets the user's games list from the Steam API.
-  Future<Rx<List<Game>>> getPlayerGamesList({required String steamID}) async {
+  Future<RxList<Game>> getPlayerGamesList({required String steamID}) async {
     try {
       // Get response from Steam API
       final response = await http.get(
@@ -96,21 +93,21 @@ class Database extends GetxController {
       Map<String, dynamic>? body = json.decode(response.body);
 
       // If there is no response, return an empty list
-      if (body == null || body.isEmpty) return RxList<Game>.empty().obs;
+      if (body == null || body.isEmpty) return List<Game>.empty().obs;
 
       // If there are no games, return an empty list
       if (body['response']['games'] == null ||
           body['response']['games'] == []) {
-        return RxList<Game>.empty().obs;
+        return List<Game>.empty().obs;
       }
 
       // Create a temporary list to store the data
-      Rx<List<Game>> temp = RxList<Game>.empty().obs;
+      RxList<Game> temp = RxList<Game>.empty();
 
       // Loop through the data
       for (int i = 0; i < body['response']['games'].length; i++) {
         // Parse data into data object classes and add to the list
-        temp.value.add(
+        temp.add(
           Game.fromMap(
             body['response']['games'][i],
           ),
@@ -119,12 +116,40 @@ class Database extends GetxController {
       // Return the data object
       return temp;
     } catch (e) {
-      logger.e(e);
-      throw Exception(e);
+      rethrow;
     }
   }
 
-  /// Gets the game details from the Steam API.
+  Future<List<GameDetails>> getEveryOwnedGamesGameDetails(
+      {required String steamID}) async {
+    // Get all games and their appID's
+    final RxList<Game> games = await getPlayerGamesList(steamID: steamID);
+    // Create a temporary list to store the data
+    RxList<GameDetails> temp = RxList<GameDetails>.empty();
+
+    logger.i("Starting loop");
+    // Loop through the games, getting their details
+    int i = 0;
+    for (var game in games) {
+      logger.i(i);
+      temp.add(await getGameDetails(steamID: steamID, appID: game.appId));
+      temp.value[i] = temp.value[i].copyWith(
+        gameName: games.value[i].name,
+      );
+      // Update name while we are here
+      i++;
+    }
+
+    logger.i("End of loop");
+    logger.i(temp);
+    // Return the data object
+    return temp;
+  }
+
+  /// Gets a single GameDetails object from the Steam API.
+  ///
+  /// This function also calls [getAchievements] to get the user's achievements for the game.
+  /// Which is then added to the GameDetails object.
   Future<GameDetails> getGameDetails(
       {required String steamID, required int appID}) async {
     try {
@@ -141,16 +166,25 @@ class Database extends GetxController {
       // If there is no response, return an empty list
       if (body == null || body.isEmpty) return GameDetails.empty();
 
+      Rx<GameDetails> temp = GameDetails.fromMap(body).obs;
+
+      // Get achievements
+      temp = await getAchievements(
+            gameDetails: temp,
+            steamID: steamID,
+            appID: appID,
+          ) ??
+          temp;
+
       // Parse data into data object classes and return it
-      return GameDetails.fromMap(body);
+      return temp.value;
     } catch (e) {
-      logger.e(e);
-      throw Exception(e);
+      rethrow;
     }
   }
 
   /// Gets the user's achievements for a specific game from the Steam API.
-  Future<void> getAchievements({
+  Future<Rx<GameDetails>?> getAchievements({
     required Rx<GameDetails> gameDetails,
     required String steamID,
     required int appID,
@@ -168,7 +202,7 @@ class Database extends GetxController {
           json.decode(response.body)['playerstats']['achievements'];
 
       // If there is no response, return
-      if (body == null || body.isEmpty || body == []) return;
+      if (body == null || body.isEmpty || body == []) return null;
 
       // Update the current achievements 'achieved' value
       gameDetails.value = gameDetails.value.copyWith(
@@ -202,9 +236,25 @@ class Database extends GetxController {
             .where((element) => element.achieved == 0)
             .toList(),
       );
+      return gameDetails;
     } catch (e) {
       logger.e(e);
-      throw Exception(e);
+      rethrow;
+    }
+  }
+
+  Future<int> getSteamLevel({required String steamID}) {
+    try {
+      return http
+          .get(
+            Uri.parse(
+              'http://api.steampowered.com/IPlayerService/GetSteamLevel/v1/?key=$steamApiKey&steamid=$steamID',
+            ),
+          )
+          .then((value) => json.decode(value.body)['response']['player_level']);
+    } catch (e) {
+      logger.e("Error getting steam level");
+      rethrow;
     }
   }
 }

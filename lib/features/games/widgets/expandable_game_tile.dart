@@ -21,6 +21,8 @@ class ExpandableGameTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ExpansionTile(
+      iconColor: KColors.menuHighlightColor,
+      collapsedIconColor: KColors.logoColor,
       title: Text(
         gameName,
         style: const TextStyle(

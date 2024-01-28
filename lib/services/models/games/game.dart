@@ -82,10 +82,25 @@ class Game extends Equatable {
     );
   }
 
+  factory Game.fromSharedPrefs(Map<String, dynamic> map) {
+    return Game(
+      appId: map['appId'] as int,
+      name: map['name'] as String,
+      playtimeForever:
+          map['playtimeForever'] != null ? map['playtimeForever'] as int : 0,
+      playtime2Weeks:
+          map['playtime2Weeks'] != null ? map['playtime2Weeks'] as int : 0,
+      imgIconUrl: map['imgIconUrl'] as String,
+      imgLogoUrl: map['imgLogoUrl'] as String,
+      hasCommunityVisibleStats: map['hasCommunityVisibleStats'] ?? false,
+    );
+  }
+
   String toJson() => json.encode(toMap());
 
-  factory Game.fromJson(String source) =>
-      Game.fromMap(json.decode(source) as Map<String, dynamic>);
+  factory Game.fromJson(String source) {
+    return Game.fromMap(json.decode(source) as Map<String, dynamic>);
+  }
 
   @override
   bool get stringify => true;

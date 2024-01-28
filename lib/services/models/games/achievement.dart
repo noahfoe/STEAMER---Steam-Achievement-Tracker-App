@@ -69,6 +69,18 @@ class Achievement extends Equatable {
     };
   }
 
+  factory Achievement.fromSharedPrefs(Map<String, dynamic> map) {
+    return Achievement(
+      name: map['name'] as String,
+      displayName: map['displayName'] as String,
+      achieved: map['defaultValue'] as int,
+      description: map['description'] ?? 'No Description Given',
+      icon: map['icon'] as String,
+      iconGray: map['iconGray'] as String,
+      hidden: map['hidden'] as int,
+    );
+  }
+
   factory Achievement.fromMap(Map<String, dynamic> map) {
     return Achievement(
       name: map['name'] as String,

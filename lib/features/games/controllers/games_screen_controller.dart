@@ -34,14 +34,15 @@ class GamesScreenController extends GetxController with StateMixin<void> {
   init() async {
     change(null, status: RxStatus.loading());
     try {
-      playerGamesList = await _database.getPlayerGamesList(steamID: steamID);
+      playerGamesList.value =
+          await _database.getPlayerGamesList(steamID: steamID);
       filteredGamesList.value = playerGamesList.value;
       if (playerGamesList.value.isEmpty) {
         change(null, status: RxStatus.empty());
         return;
       }
-    } catch (e) {
-      logger.e(e);
+    } catch (e, s) {
+      logger.e(e, stackTrace: s);
       change(null, status: RxStatus.error(e.toString()));
     }
     change(null, status: RxStatus.success());
