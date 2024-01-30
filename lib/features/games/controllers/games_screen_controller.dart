@@ -8,22 +8,25 @@ import 'package:steam_achievement_tracker/services/utils/database.dart';
 class GamesScreenController extends GetxController with StateMixin<void> {
   final String steamID;
 
-  Rx<List<Game>> playerGamesList = RxList<Game>.empty().obs;
+  List<Game> playerGamesList = List<Game>.empty().obs;
   Rx<List<Game>> filteredGamesList = RxList<Game>.empty().obs;
 
   final Database _database = Database.instance;
   final TextEditingController searchController = TextEditingController();
 
-  GamesScreenController({required this.steamID}) {
+  GamesScreenController({
+    required this.steamID,
+    required this.playerGamesList,
+  }) {
     init();
   }
 
   searchGamesList(String value) {
     if (value.isEmpty) {
-      filteredGamesList.value = playerGamesList.value;
+      filteredGamesList.value = playerGamesList;
       return;
     }
-    filteredGamesList.value = playerGamesList.value
+    filteredGamesList.value = playerGamesList
         .where((Game element) =>
             element.name.toLowerCase().contains(value.toLowerCase()))
         .toList()
@@ -33,10 +36,11 @@ class GamesScreenController extends GetxController with StateMixin<void> {
   init() async {
     change(null, status: RxStatus.loading());
     try {
-      playerGamesList.value =
-          await _database.getPlayerGamesList(steamID: steamID);
-      filteredGamesList.value = playerGamesList.value;
-      if (playerGamesList.value.isEmpty) {
+      if (playerGamesList.isEmpty) {
+        playerGamesList = await _database.getPlayerGamesList(steamID: steamID);
+      }
+      filteredGamesList.value = playerGamesList;
+      if (playerGamesList.isEmpty) {
         change(null, status: RxStatus.empty());
         return;
       }

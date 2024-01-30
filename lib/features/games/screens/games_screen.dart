@@ -4,21 +4,33 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:steam_achievement_tracker/features/games/controllers/games_screen_controller.dart';
 import 'package:steam_achievement_tracker/features/games/widgets/game_list_tile.dart';
+import 'package:steam_achievement_tracker/services/models/games/game.dart';
+import 'package:steam_achievement_tracker/services/models/games/game_details.dart';
+import 'package:steam_achievement_tracker/services/models/user/user_steam_information.dart';
 import 'package:steam_achievement_tracker/services/utils/colors.dart';
 import 'package:steam_achievement_tracker/services/widgets/my_app_bar.dart';
 
 class GamesScreen extends StatelessWidget {
   final String steamID;
+  final List<Game> playerGamesList;
+  final List<GameDetails> gameDetails;
+  final UserSteamInformation playerSummary;
 
   const GamesScreen({
     Key? key,
     required this.steamID,
+    required this.playerGamesList,
+    required this.gameDetails,
+    required this.playerSummary,
   }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return GetBuilder<GamesScreenController>(
-      init: GamesScreenController(steamID: steamID),
+      init: GamesScreenController(
+        steamID: steamID,
+        playerGamesList: playerGamesList,
+      ),
       builder: (GamesScreenController controller) {
         return Scaffold(
           backgroundColor: KColors.backgroundColor,
@@ -63,6 +75,11 @@ class GamesScreen extends StatelessWidget {
                         ),
                         GameListTile(
                           game: controller.filteredGamesList.value[index],
+                          gameDetails: gameDetails.firstWhere(
+                            (element) =>
+                                element.gameName ==
+                                controller.filteredGamesList.value[index].name,
+                          ),
                           steamId: steamID,
                         )
                       ],
@@ -70,6 +87,11 @@ class GamesScreen extends StatelessWidget {
                   }
                   return GameListTile(
                     game: controller.filteredGamesList.value[index],
+                    gameDetails: gameDetails.firstWhere(
+                      (element) =>
+                          element.gameName ==
+                          controller.filteredGamesList.value[index].name,
+                    ),
                     steamId: steamID,
                   );
                 },

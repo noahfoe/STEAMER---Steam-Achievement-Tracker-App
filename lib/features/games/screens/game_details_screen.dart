@@ -12,10 +12,12 @@ import 'package:steam_achievement_tracker/services/widgets/my_app_bar.dart';
 class GameDetailsScreen extends StatelessWidget {
   final String steamID;
   final Game game;
+  final GameDetails gameDetails;
 
   const GameDetailsScreen({
     Key? key,
     required this.steamID,
+    required this.gameDetails,
     required this.game,
   }) : super(key: key);
 
@@ -25,6 +27,7 @@ class GameDetailsScreen extends StatelessWidget {
       init: GameDetailsScreenController(
         appID: game.appId,
         steamID: steamID,
+        gameDetails: gameDetails,
       ),
       builder: (controller) {
         return Scaffold(
@@ -60,59 +63,50 @@ class _AchievementDropdowns extends GetView<GameDetailsScreenController> {
     return Expanded(
       child: ListView(
         children: [
-          if (controller
-              .gameInfoAndAchievements.value.allAchievements!.isNotEmpty)
+          if (controller.gameDetails.allAchievements!.isNotEmpty)
             Column(
               children: [
                 // All Achievements
-                Obx(
-                  () => Visibility(
-                    visible: controller.gameInfoAndAchievements.value
-                        .allAchievements!.isNotEmpty,
-                    child: Obx(
-                      () => ExpandableGameTile(
-                        isTotal: true,
-                        gameName: game.name,
-                        achievements: controller.gameInfoAndAchievements.value
-                                .allAchievements ??
-                            [],
-                        globalAchievementPercentages:
-                            controller.achievementsAndGlobalPercentages.value,
-                      ),
+                Visibility(
+                  visible: controller.gameDetails.allAchievements!.isNotEmpty,
+                  child: Obx(
+                    () => ExpandableGameTile(
+                      isTotal: true,
+                      gameName: game.name,
+                      achievements:
+                          controller.gameDetails.allAchievements ?? [],
+                      globalAchievementPercentages:
+                          controller.achievementsAndGlobalPercentages.value,
                     ),
                   ),
                 ),
+
                 // Unlocked Achievements
-                Obx(
-                  () => Visibility(
-                    visible: controller.gameInfoAndAchievements.value
-                        .unlockedAchievements!.isNotEmpty,
-                    child: Obx(
-                      () => ExpandableGameTile(
-                        gameName: "Unlocked Achievements",
-                        achievements: controller.gameInfoAndAchievements.value
-                                .unlockedAchievements ??
-                            [],
-                        globalAchievementPercentages:
-                            controller.achievementsAndGlobalPercentages.value,
-                      ),
+                Visibility(
+                  visible:
+                      controller.gameDetails.unlockedAchievements!.isNotEmpty,
+                  child: Obx(
+                    () => ExpandableGameTile(
+                      gameName: "Unlocked Achievements",
+                      achievements:
+                          controller.gameDetails.unlockedAchievements ?? [],
+                      globalAchievementPercentages:
+                          controller.achievementsAndGlobalPercentages.value,
                     ),
                   ),
                 ),
+
                 // Locked Achievements
-                Obx(
-                  () => Visibility(
-                    visible: controller.gameInfoAndAchievements.value
-                        .lockedAchievements!.isNotEmpty,
-                    child: Obx(
-                      () => ExpandableGameTile(
-                        gameName: "Locked Achievements",
-                        achievements: controller.gameInfoAndAchievements.value
-                                .lockedAchievements ??
-                            [],
-                        globalAchievementPercentages:
-                            controller.achievementsAndGlobalPercentages.value,
-                      ),
+                Visibility(
+                  visible:
+                      controller.gameDetails.lockedAchievements!.isNotEmpty,
+                  child: Obx(
+                    () => ExpandableGameTile(
+                      gameName: "Locked Achievements",
+                      achievements:
+                          controller.gameDetails.lockedAchievements ?? [],
+                      globalAchievementPercentages:
+                          controller.achievementsAndGlobalPercentages.value,
                     ),
                   ),
                 ),
@@ -121,7 +115,7 @@ class _AchievementDropdowns extends GetView<GameDetailsScreenController> {
           else
             // No Achievements State
             _NoAchievementsState(
-              gameDetails: controller.gameInfoAndAchievements.value,
+              gameDetails: controller.gameDetails,
               game: game,
             ),
         ],

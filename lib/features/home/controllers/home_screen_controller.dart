@@ -72,6 +72,9 @@ class HomeScreenController extends GetxController with StateMixin<void> {
       MaterialPageRoute(
         builder: (context) => GamesScreen(
           steamID: steamID,
+          playerGamesList: playerGamesList.value,
+          gameDetails: gameDetails.value,
+          playerSummary: playerSummary.value,
         ),
       ),
     );

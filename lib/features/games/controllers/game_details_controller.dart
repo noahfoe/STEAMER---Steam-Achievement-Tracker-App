@@ -9,35 +9,44 @@ import 'package:steam_achievement_tracker/services/utils/database.dart';
 class GameDetailsScreenController extends GetxController with StateMixin<void> {
   final String steamID;
   final int appID;
+  GameDetails gameDetails;
 
-  GameDetailsScreenController({required this.steamID, required this.appID}) {
+  GameDetailsScreenController({
+    required this.steamID,
+    required this.appID,
+    required this.gameDetails,
+  }) {
     init();
   }
 
   final Database _database = Database.instance;
-  final Rx<GameDetails> gameInfoAndAchievements = GameDetails.empty().obs;
+  final PageController pageController = PageController();
+
+  // final Rx<GameDetails> gameInfoAndAchievements = GameDetails.empty().obs;
   final Rx<List<GlobalAchievementPercentages>>
       achievementsAndGlobalPercentages =
       RxList<GlobalAchievementPercentages>.empty().obs;
-  final PageController pageController = PageController();
 
   init() async {
     change(null, status: RxStatus.loading());
     try {
-      gameInfoAndAchievements.value = await _database.getGameDetails(
-        steamID: steamID,
-        appID: appID,
-      );
+      if (gameDetails != GameDetails.empty()) {
+        gameDetails = await _database.getGameDetails(
+          steamID: steamID,
+          appID: appID,
+        );
 
-      if (gameInfoAndAchievements.value == GameDetails.empty()) {
-        change(null, status: RxStatus.empty());
-        return;
+        if (gameDetails == GameDetails.empty()) {
+          change(null, status: RxStatus.empty());
+          return;
+        }
+        await _database.getAchievements(
+          gameDetails: gameDetails.obs,
+          steamID: steamID,
+          appID: appID,
+        );
       }
-      await _database.getAchievements(
-        gameDetails: gameInfoAndAchievements,
-        steamID: steamID,
-        appID: appID,
-      );
+
       achievementsAndGlobalPercentages.value =
           await _database.getGlobalAchievementPercentagesForApp(appID: appID);
     } catch (e) {
